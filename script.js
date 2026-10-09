@@ -1,211 +1,128 @@
+// Welcome button
+const startBtn = document.getElementById("startBtn");
+const welcomeScreen = document.getElementById("welcomeScreen");
+const mainContent = document.getElementById("mainContent");
 
-document.addEventListener("DOMContentLoaded", function () {
-  const welcomeScreen = document.getElementById("welcomeScreen");
-  const openHeartBtn = document.getElementById("openHeartBtn");
-  const mainContent = document.getElementById("mainContent");
-
-  const bgMusic = document.getElementById("bgMusic");
-  const musicBtn = document.getElementById("musicBtn");
-
-  const letterBtn = document.getElementById("letterBtn");
-  const loveLetter = document.getElementById("loveLetter");
-
-  const chanceBtn = document.getElementById("chanceBtn");
-  const timeBtn = document.getElementById("timeBtn");
-  const responseBox = document.getElementById("responseBox");
-  const responseTitle = document.getElementById("responseTitle");
-  const responseText = document.getElementById("responseText");
-  const closeResponseBtn = document.getElementById("closeResponseBtn");
-
-  const heartsBg = document.getElementById("heartsBg");
-
-  const lightbox = document.getElementById("lightbox");
-  const lightboxImage = document.getElementById("lightboxImage");
-  const lightboxClose = document.getElementById("lightboxClose");
-
-  // 1. Welcome screen
-  openHeartBtn.addEventListener("click", async function () {
-    welcomeScreen.classList.add("leaving");
-
+startBtn.addEventListener("click", function () {
+    welcomeScreen.classList.add("hidden");
     mainContent.classList.remove("hidden");
 
-    // Music starts only after the visitor clicks.
-    try {
-      await bgMusic.play();
-      musicBtn.textContent = "♫ Pause Music";
-      musicBtn.setAttribute("aria-label", "Pause background music");
-    } catch (error) {
-      musicBtn.textContent = "♫ Play Music";
-    }
-
-    // Remove the welcome screen after its fade animation.
-    window.setTimeout(function () {
-      welcomeScreen.style.display = "none";
-    }, 750);
-
-    createHearts();
-  });
-
-  // 2. Background music play / pause
-  musicBtn.addEventListener("click", async function () {
-    if (bgMusic.paused) {
-      try {
-        await bgMusic.play();
-        musicBtn.textContent = "♫ Pause Music";
-        musicBtn.setAttribute("aria-label", "Pause background music");
-      } catch (error) {
-        musicBtn.textContent = "♫ Music unavailable";
-      }
-    } else {
-      bgMusic.pause();
-      musicBtn.textContent = "♫ Play Music";
-      musicBtn.setAttribute("aria-label", "Play background music");
-    }
-  });
-
-  // Update the music button if playback ends or fails.
-  bgMusic.addEventListener("pause", function () {
-    musicBtn.textContent = "♫ Play Music";
-    musicBtn.setAttribute("aria-label", "Play background music");
-  });
-
-  bgMusic.addEventListener("play", function () {
-    musicBtn.textContent = "♫ Pause Music";
-    musicBtn.setAttribute("aria-label", "Pause background music");
-  });
-
-  bgMusic.addEventListener("error", function () {
-    musicBtn.textContent = "♫ Music unavailable";
-    musicBtn.title = "Check music/romantic.mp3";
-  });
-
-  // 3. Floating heart animation
-  function createHearts() {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      return;
-    }
-
-    const heartSymbols = ["♡", "♥", "💕", "♡"];
-
-    function addHeart() {
-      if (document.hidden || !heartsBg.isConnected) return;
-
-      const heart = document.createElement("span");
-      heart.className = "floating-heart";
-      heart.textContent =
-        heartSymbols[Math.floor(Math.random() * heartSymbols.length)];
-
-      heart.style.left = Math.random() * 100 + "%";
-      heart.style.fontSize = 14 + Math.random() * 22 + "px";
-      heart.style.animationDuration = 7 + Math.random() * 7 + "s";
-
-      heartsBg.appendChild(heart);
-
-      heart.addEventListener("animationend", function () {
-        heart.remove();
-      });
-    }
-
-    // Keep the number of animated hearts limited.
-    window.setInterval(function () {
-      if (heartsBg.childElementCount < 15) {
-        addHeart();
-      }
-    }, 850);
-  }
-
-  // 4. Open and close the romantic letter
-  letterBtn.addEventListener("click", function () {
-    const isOpening = loveLetter.classList.contains("hidden");
-
-    loveLetter.classList.toggle("hidden");
-    letterBtn.setAttribute("aria-expanded", String(isOpening));
-
-    if (isOpening) {
-      letterBtn.querySelector(".envelope-text").textContent =
-        "Your letter is open ♡";
-
-      loveLetter.scrollIntoView({
-        behavior: "smooth",
-        block: "center"
-      });
-    } else {
-      letterBtn.querySelector(".envelope-text").textContent =
-        "Open your letter";
-    }
-  });
-
-  // 5. Final question: willing to give a chance
-  chanceBtn.addEventListener("click", function () {
-    responseTitle.textContent = "Thank you for hearing my heart. 💗";
-
-    responseText.textContent =
-      "If this is what you want too, I would be grateful for the chance " +
-      "to take things slowly, listen to you, and show my sincerity " +
-      "through my actions. One step at a time.";
-
-    showResponse();
-  });
-
-  // 6. Final question: needs more time
-  timeBtn.addEventListener("click", function () {
-    responseTitle.textContent = "Take all the time you need. 🤍";
-
-    responseText.textContent =
-      "I understand that you may need time and space. " +
-      "I won't rush you or expect an immediate answer. " +
-      "Your feelings and your decision deserve respect.";
-
-    showResponse();
-  });
-
-  function showResponse() {
-    responseBox.classList.remove("hidden");
-
-    responseBox.scrollIntoView({
-      behavior: "smooth",
-      block: "center"
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
     });
-  }
 
-  closeResponseBtn.addEventListener("click", function () {
-    responseBox.classList.add("hidden");
-  });
+    // Try to play music after the click
+    const music = document.getElementById("bgMusic");
 
-  // 7. Enlarge photos when clicked
-  document.querySelectorAll(".photo-card img").forEach(function (photo) {
-    photo.addEventListener("click", function () {
-      if (!photo.complete || photo.naturalWidth === 0) {
-        alert("This photo could not be loaded. Please check the image file.");
-        return;
-      }
-
-      lightboxImage.src = photo.src;
-      lightboxImage.alt = photo.alt;
-      lightbox.classList.remove("hidden");
-      lightboxClose.focus();
-    });
-  });
-
-  function closeLightbox() {
-    lightbox.classList.add("hidden");
-    lightboxImage.src = "";
-  }
-
-  lightboxClose.addEventListener("click", closeLightbox);
-
-  lightbox.addEventListener("click", function (event) {
-    if (event.target === lightbox) {
-      closeLightbox();
+    if (music) {
+        music.play().then(function () {
+            document.getElementById("musicBtn").textContent =
+                "⏸ Pause Music";
+        }).catch(function () {
+            // Music can be started using the music button
+        });
     }
-  });
-
-  // 8. Close the enlarged photo with Escape
-  document.addEventListener("keydown", function (event) {
-    if (event.key === "Escape") {
-      if (!lightbox.classList.contains("hidden")) {
-        closeLightbox();
-      }
-    }
-  });
 });
+
+
+// Background music button
+const musicBtn = document.getElementById("musicBtn");
+const bgMusic = document.getElementById("bgMusic");
+
+musicBtn.addEventListener("click", function () {
+    if (bgMusic.paused) {
+        bgMusic.play().then(function () {
+            musicBtn.textContent = "⏸ Pause Music";
+        }).catch(function () {
+            alert("Music could not play. Please check romantic.mp3.");
+        });
+    } else {
+        bgMusic.pause();
+        musicBtn.textContent = "🎵 Play Music";
+    }
+});
+
+
+// Open and close the love letter
+const letterBtn = document.getElementById("letterBtn");
+const letterContent = document.getElementById("letterContent");
+
+letterBtn.addEventListener("click", function () {
+    letterContent.classList.toggle("hidden");
+
+    if (letterContent.classList.contains("hidden")) {
+        letterBtn.textContent = "Open My Letter 💗";
+    } else {
+        letterBtn.textContent = "Close My Letter 💌";
+    }
+});
+
+
+// Final question buttons
+const yesBtn = document.getElementById("yesBtn");
+const timeBtn = document.getElementById("timeBtn");
+const finalMessage = document.getElementById("finalMessage");
+
+yesBtn.addEventListener("click", function () {
+    finalMessage.textContent =
+        "Thank you for hearing my heart, Goongoon. ❤️ " +
+        "We can take things slowly, talk honestly, and see what feels right for both of us. 💗";
+
+    finalMessage.classList.remove("hidden");
+});
+
+timeBtn.addEventListener("click", function () {
+    finalMessage.textContent =
+        "I understand, Goongoon. ❤️ Take all the time you need. " +
+        "I respect your feelings and your decision. 🌷";
+
+    finalMessage.classList.remove("hidden");
+});
+
+
+// Photo lightbox
+const photos = document.querySelectorAll(".memory-photo");
+const lightbox = document.getElementById("lightbox");
+const lightboxImage = document.getElementById("lightboxImage");
+const closeLightbox = document.getElementById("closeLightbox");
+
+photos.forEach(function (photo) {
+    photo.addEventListener("click", function () {
+        lightboxImage.src = photo.src;
+        lightboxImage.alt = photo.alt;
+        lightbox.classList.remove("hidden");
+    });
+});
+
+closeLightbox.addEventListener("click", function () {
+    lightbox.classList.add("hidden");
+});
+
+lightbox.addEventListener("click", function (event) {
+    if (event.target === lightbox) {
+        lightbox.classList.add("hidden");
+    }
+});
+
+
+// Floating hearts
+const heartsContainer = document.getElementById("heartsContainer");
+
+if (heartsContainer) {
+    const heartSymbols = ["❤️", "💗", "💕", "💖", "🌸"];
+
+    for (let i = 0; i < 15; i++) {
+        const heart = document.createElement("span");
+
+        heart.textContent =
+            heartSymbols[Math.floor(Math.random() * heartSymbols.length)];
+
+        heart.className = "floating-heart";
+        heart.style.left = Math.random() * 100 + "%";
+        heart.style.animationDelay = Math.random() * 8 + "s";
+        heart.style.animationDuration = 6 + Math.random() * 8 + "s";
+
+        heartsContainer.appendChild(heart);
+    }
+}
